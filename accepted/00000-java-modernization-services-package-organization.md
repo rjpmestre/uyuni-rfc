@@ -170,7 +170,7 @@ Before diving into a proposal, we should define the concepts used throughout thi
 **Factory** (Legacy) – Component responsible for creating and initializing domain objects. It may contain logic directly related to object construction. This includes processes like validation, relationship initialization, assigning default values, etc. But in current codebase, factories sometimes include responsibilities beyond that, that include business logic or use case orchestration. In new code, these should be part of the Service.
 
 ### Domain Layer
-**Entity (Model)** – Represents a business concept and its persistent state within the domain.
+**Entity (Model)** – Lightweight Java class (POJO) mapped to a database table, where each instance corresponds to a single row in that table. It defines how a persistable domain object maps to the database, holding its persistent state and relationships to other entities.
 
 **DTO (Data Transfer Object)** – Carries data across architectural boundaries without containing business logic. Can be shared, specific to a presentation layer (like `webui` or `xmlrpc`), or part of a service contract (e.g. request/response DTOs), Depending on their scope.
 
@@ -317,7 +317,7 @@ The table below summarizes what each layer holds, what it is responsible for, an
 | **api/** | `*Controller.java`, `*Handler.java`, presentation DTOs & mappers | Extract request params, delegate to services, format responses | Business logic, validation, data access |
 | **service/** | `*Service.java` + request/response DTOs (`spec/`); `*ServiceImpl.java`, facades, helpers, mappers (`impl/`) | Define and implement business use cases: logic, orchestration, validation | Protocol knowledge (HTTP, XMLRPC), persistence details |
 | **repository/** | `*Repository.java`, `*RepositoryImpl.java` | CRUD, queries, data access | Business logic, DTOs |
-| **entity/** | `<Entity>.java` (`@Entity`) | Represent domain concepts and their persistent state and relationships | DTOs, service/business logic |
+| **entity/** | `<Entity>.java` (`@Entity`) | Map database tables, one instance per row, holding persistent state and relationships | DTOs, service/business logic |
 | **common/** | Shared DTOs, mappers, utilities | Provide cross-cutting shared components | Domain/business logic |
 
 **NOTE**: `common/` is cross-cutting and may be used by any layer.

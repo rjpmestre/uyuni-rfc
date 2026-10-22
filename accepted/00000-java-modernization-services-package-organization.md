@@ -5,7 +5,9 @@
 # Summary
 [summary]: #summary
 
-This RFC a proposes package organization patterns and component responsibilities for Uyuni's Java codebase, focusing primarily on **how presentation layers (Web UI and XMLRPC) interact with business logic (Services)** and where different components should live.
+This RFC proposes package organization patterns and component responsibilities for Uyuni's Java codebase. It focuses on defining 2 things:
+1. **which components we should use, their scope and responsibilities**
+2. **the layered structure**: how presentation layers (Web UI and XMLRPC) interact with business logic (Services), and where each component should live
 
 The proposal aims to improve code clarity, testability, and maintainability by defining:
 - Clear boundaries between presentation (web/xmlrpc), business logic (services), and data access
@@ -361,4 +363,20 @@ The alternative is to keep the current domain-centric structure. The foreseen im
 4. **Concept Naming and Patterns**
    - Is "Facade" the right term for these internal orchestration classes? Maybe orchestrator? workflow?
    - Do these terms align with team understanding and existing conventions?
-   - Do these conventions cover all our needs? 
+   - Do these conventions cover all our needs?
+
+5. **Modularization and Containerization**
+
+Uyuni runs several **application components** (not to be confused with the java components discussed earlier) from the same codebase, including the Web UI, XMLRPC API, Taskomatic, and CoCo attestation. Although these components serve different purposes, building an individual component still requires code belonging to other components.
+
+As part of the ongoing containerization efforts, we should consider this an opportunity to move towards a more modular architecture. For example, we could introduce a shared **core module** alongside **component-specific modules**. Taskomatic, for instance, could then be built as a separate JAR, combining the core module PLUS its own business logic and jobs.
+This would also facilitate containerization by allowing each component to be packaged independently, reducing unnecessary deployment dependencies and making it easier to configure, scale components independently, etc.
+
+Defining the target modular architecture is beyond the scope of this RFC and should be **addressed in a dedicated RFC**, as it raises questions such as build configuration, dependency management, and component lifecycle, etc.
+
+However, we're mentioning the topic here because it can influence the proposed/agreed package structure, which could either facilitate or hinder future modularization. For example, if we can already identify a set of core functionalities, we could consider grouping them under `com.suse.manager.core.*`, while Taskomatic-specific functionality could go under `com.suse.manager.taskomatic.*`. This would be one less thing to consider when eventually modularizing Taskomatic.
+
+So, in the meantime we can try answering:
+   - Should we even consider future modularization and containerization requirements right now?
+   - Do we agree at least there is set of core functionalities? What would belong there? How do we keep it small?
+   - Do we have any clear idea of what modules we could work out?

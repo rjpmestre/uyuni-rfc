@@ -138,6 +138,7 @@ Together these boundary problems make code harder to **test** (data access can't
 - **Clear layering** - Dependencies flow in one direction: api/spec -> implementation -> persistence
 - **Gradual adoption** - Can be introduced incrementally without disrupting existing code
 - **Long Term maintainability** - Clear architectural boundaries makes the code more predictable and easier to modify, extend, and refactor over time
+- **Common ground for contributors and reviewers** – Shared expectations make reviews more consistent and less dependent on individual preferences, allowing both to focus on the specifics of each task rather than revisiting agreed architectural decisions
 
 # Detailed design
 [design]: #detailed-design

@@ -106,7 +106,7 @@ A Manager **may** call another Manager.
 - hide the persistence technology (HQL, named queries, native SQL, `datasource` mode queries)
 
 **Must not**
-- contain business rules. For example, deciding whether a user may see a channel based on their org admin role belongs in the Manager, not in the lookup query.
+- contain business rules, e.g. having Java logic deciding which data the caller gets; that goes in the Manager.
 - call Managers
 - return DTOs tied to one kind of caller (exclusively), such as a Web UI screen or the XMLRPC API. Returning DTOs any caller can use is fine.
 

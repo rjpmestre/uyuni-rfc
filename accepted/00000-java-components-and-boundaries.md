@@ -28,10 +28,10 @@ The same responsibility is implemented today in different places: a business rul
 
 Some consequences:
 
-- business logic is duplicated between XMLRPC handlers and Web UI controllers, and the two drift apart
-- data access and business rules are mixed in the same method, so neither can be tested alone
+- business logic is duplicated between XMLRPC handlers and Web UI controllers, and the two drift apart.
+- data access and business rules are mixed in the same method, so neither can be tested alone.
 - there are no rules on which component may call which, so calls can go in every direction: Controllers query the database, Factories calling Managers, Web UI Controllers call XMLRPC Handlers. Then, a change in one place can break code that should never have depended on it.
-- code review spends time on the same structural debates in every PR
+- code review spends time on the same structural debates in every PR.
 
 ## Expected outcome
 
@@ -87,8 +87,8 @@ This role matches what Fowler calls a [Service Layer](https://martinfowler.com/e
 
 **Responsibilities**
 - expose complete business operations. If a caller would need the result of one Manager call to make the next, or would have to make calls in a specific order, that sequence belongs inside one Manager method.
-- enforce business rules and *business* validation (permissions, state, invariants)
-- orchestrate Factories, other Managers and external systems (Salt, Cobbler, ...)
+- enforce business rules and *business* validation (permissions, state, invariants).
+- orchestrate Factories, other Managers and external systems (Salt, Cobbler, ...).
 - throw exceptions that describe what went wrong (for example, `ChannelHasChildrenException`). Each Controller or Handler decides how to report them to its caller: HTTP error, XMLRPC fault, job failure.
 
 **Must not**
@@ -107,7 +107,7 @@ A Manager **may** call another Manager.
 
 **Must not**
 - contain business rules, e.g. having Java logic deciding which data the caller gets; that goes in the Manager.
-- call Managers
+- call Managers.
 - return DTOs tied to one kind of caller (exclusively), such as a Web UI screen or the XMLRPC API. Returning DTOs any caller can use is fine.
 
 ### Entity
@@ -143,8 +143,8 @@ A Manager **may** call another Manager.
 - convert one representation into another, as a pure function. For example: Entity to DTO, DTO to JSON or XMLRPC struct, a Salt or external API payload to a DTO.
 
 **Must not**
-- query, persist, or call Managers
-- make business decisions. If the conversion depends on a rule, the Manager decides and passes the result in
+- query, persist, or call Managers.
+- make business decisions. If the conversion depends on a rule, the Manager decides and passes the result in.
 
 
 ## Dependency rules
@@ -171,11 +171,11 @@ Some of the following examples will also be in [this PR](https://github.com/uyun
 ### Merging errata between channels
 
 **Before:** the Handler:
-- acquires the source and target channels;
-- checks user permission to the channels;
-- queries the Errata Factory for the source errata;
-- delegates the merge operation to a Manager;
-- converts the result into the expected XML-RPC response format.
+- acquires the source and target channels
+- checks user permission to the channels
+- queries the Errata Factory for the source errata
+- delegates the merge operation to a Manager
+- converts the result into the expected XML-RPC response format
 
 The Handler should be oblivious to the business rules. Its only responsibilities should be to delegate the operation and translate the result and any exceptions into the expected XML-RPC response format.
 
@@ -242,11 +242,11 @@ Each entry point only needs to know how to adapt the returned `Set<Errata>` to i
 ### Assigning formulas to a system
 
 **Before:** the Handler:
-- looks up the MinionServer by ID;
-- checks whether the user has permission to access the server;
-- saves the server formulas;
-- refreshes the Salt pillar;
-- translates internal exceptions into XML-RPC-specific exceptions.
+- looks up the MinionServer by ID
+- checks whether the user has permission to access the server
+- saves the server formulas
+- refreshes the Salt pillar
+- translates internal exceptions into XML-RPC-specific exceptions
 
 Again, the Handler should be oblivious to the business rules and underlying operation details. Its only responsibilities should be to delegate the operation and translate exceptions into the expected XML-RPC response format.
 
@@ -308,11 +308,11 @@ public void saveServerFormulas(User user, Long systemId, List<String> formulas) 
 ### Removing servers from a group
 
 **Before:** the Factory:
-- keeps only the servers that belong to the group's org;
-- removes them from the group in the database;
-- updates each server's groups and its system overview, through a Manager;
-- refreshes the group permissions when the group is managed;
-- fails when nothing was removed.
+- keeps only the servers that belong to the group's org
+- removes them from the group in the database
+- updates each server's groups and its system overview, through a Manager
+- refreshes the group permissions when the group is managed
+- fails when nothing was removed
 
 Only the database write belongs in a Factory. Deciding which servers can be removed and what must happen afterwards are business rules, so they belong in a Manager.
 
